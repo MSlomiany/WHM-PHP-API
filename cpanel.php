@@ -15,6 +15,7 @@ class cpanel
     private $username;  //login
     private $password;  //hasło     
     private $host;      //serwer
+
     /**
      * class cpanel constructor
      */
@@ -24,6 +25,7 @@ class cpanel
         $this->password = $password;
         $this->host = $host;
     }
+
     /**
      * Authorization parameters setter
      */
@@ -33,6 +35,7 @@ class cpanel
         $this->password = $password;
         $this->host = $host;
     }
+
     /**
      * Password getter
      */
@@ -40,6 +43,7 @@ class cpanel
     {
         return $this->password;
     }
+
     /**
      * Username getter
      */
@@ -47,6 +51,7 @@ class cpanel
     {
         return $this->username;
     }
+
     /**
      * Host getter
      */
@@ -54,8 +59,9 @@ class cpanel
     {
         return $this->host;
     }
+
     /**
-     * Creating new account
+     * Create new account
      * Parse parameters as an associative array
      */
     public function createAccount($username, $domain, $contactemail, $password, $plan)
@@ -68,8 +74,9 @@ class cpanel
             'plan' => $plan
         ]);
     }
+
     /**
-     * Removing existing account
+     * Remove existing account
      */
     public function removeAccount($username)
     {
@@ -77,8 +84,9 @@ class cpanel
             'username' => $username
         ]);
     }
+
     /**
-     * Listing account
+     * List account
      */
     public function listAccount($username)
     {
@@ -87,6 +95,18 @@ class cpanel
             'searchtype' => 'username'
         ]);
     }
+
+    /**
+     * Change account plan
+     */
+    public function changePlan($username, $plan)
+    {
+        return $this->executeQuery('changepackage', [
+            'user' => $username,
+            'pkg' => $plan
+        ]);
+    }
+
     /**
      * Request parser
      */
@@ -95,6 +115,7 @@ class cpanel
         $parlist = http_build_query($parameters);
         return $query = "https://{$host}/json-api/{$request}?api.version=1&{$parlist}";
     }
+
     /*
         Request execution by cURL session
         cURL commands based on WHM API 1 documentation
