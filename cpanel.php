@@ -1,64 +1,84 @@
 <?php
+/**
+ * \class cpanel
+ * \brief This is class which allow to perform 
+ * administrative tasks by WHM API 1
+ */
 class cpanel
 {
     private $username;  //login
     private $password;  //hasło     
     private $host;      //serwer
 
-    //konstruktor
+    /**
+     * class cpanel constructor
+     */
     function __construct($username, $password, $host)
     {
         $this->username = $username;
         $this->password = $password;
         $this->host = $host;
     }
-    //zmiana parametrów
-    public function setAuth($username, $password, $host)
+    /**
+     * Authorization parameters setter
+     */
+    public function setAuthorization($username, $password, $host)
     {
         $this->username = $username;
         $this->password = $password;
         $this->host = $host;
     }
-    //zwraca hasło
+    /**
+     * Password getter
+     */
     private function getPassword()
     {
         return $this->password;
     }
+    /**
+     * Username getter
+     */
     private function getUsername()
     {
         return $this->username;
     }
+    /**
+     * Host getter
+     */
     private function getHost()
     {
         return $this->host;
     }
 
     /*
-        Tworzenie nowego konta
-        - nazwa
-        - domena
-        - mail
-        - hasło
-        - plan 
+        Creating new account
+        Parse parameters as an associative array
     */
     public function createAccount($username, $domain, $contactemail, $password, $plan)
     {
+        return $this->runQuery('createacct',[
+            'username'=>$username,
+            'domain'=>$domain,
+            'contactemail'=>$contactemail,
+            'password'=>$password,
+            'plan'=>$plan
+        ]);
     }
 
     /*
-        Usuwanie konta
-        - nazwa
+        Removing existing account
     */
     public function removeAccount($username)
     {
+        return $this->runQuery('removeacct',[
+            'username'=>$username
+        ]);
     }
 
     /*
-        handler wykonujący zapytania do serwera wraz z autoryzacją
-        używa curla
-        za dokumentacją WHM API 1
+        Request execution by cURL session
     */
-    function runQuery()
+    function runQuery($request, $parameters = [])
     {
         $username = $this->getUsername();
         $password = $this->getPassword();
