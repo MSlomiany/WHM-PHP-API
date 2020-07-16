@@ -116,9 +116,29 @@ class cpanel
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);        // set the username and password
         curl_setopt($curl, CURLOPT_URL, $query);                // execute the query
         $result = curl_exec($curl);
+        /*
         if ($result == false) {
             error_log("curl_exec threw error \"" . curl_error($curl) . "\" for $query");    // log error if curl exec fails
             echo "Invalid request";                             // error notification                    
+        }
+        */
+        /**
+         * Check HTTP connection status
+         */
+        if (!curl_errno($curl)) {
+            switch ($http_error = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
+                case 200:
+                    echo "Request succeded";
+                    break;
+                case 403:
+                    echo "Invalid credentials";
+                    break;
+                case 404:
+                    echo "Invalid IP adress";
+                    break;
+                default:
+                    echo "Unexpected HTTP error";
+            }
         }
         curl_close($curl);
         print $result;
