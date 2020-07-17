@@ -66,8 +66,9 @@ class cpanel
     /**
      * Create new account
      * Parse parameters as an associative array
+     * Require username and domain
      */
-    public function createAccount($username, $domain, $contactemail, $password, $plan)
+    public function createAccount($username, $domain, $contactemail='', $password='', $plan='')
     {
         return $this->executeQuery('createacct', [
             'username' => $username,
@@ -134,6 +135,7 @@ class cpanel
     /*
         Request execution by cURL session
         cURL commands based on WHM API 1 documentation
+        evaluate server response
     */
     function executeQuery($request, $parameters = [])
     {
