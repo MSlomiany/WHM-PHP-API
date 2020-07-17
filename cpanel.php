@@ -1,13 +1,6 @@
 <?php
 
 /**
- * Użytkownik: root
- * Hasło: BN+D<$*F2a'*`5\r
- * 164.90.179.12
- * https://161.35.219.197:2087/
- */
-
-/**
  * \class cpanel
  * \brief This is class which allow to perform 
  * administrative tasks by WHM API 1
@@ -176,7 +169,7 @@ class cpanel
         }
         curl_close($curl);
         echo "$result";
-        $json = (json_decode($result,true));
+        $json = (json_decode($result, true));
         echo "WHM API error: {$json['cpanelresult']['error']}";
     }
 }
