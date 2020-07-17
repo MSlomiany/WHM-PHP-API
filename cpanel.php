@@ -24,10 +24,8 @@ class cpanel
      */
     function __construct($username, $password, $host)
     {
-        $pass = json_encode(htmlspecialchars($password));
-        $pass = substr($password, 1, -1);
         $this->username = $username;
-        $this->password = $pass;
+        $this->password = $password;
         $this->host = $host;
     }
 
@@ -113,11 +111,23 @@ class cpanel
     }
 
     /**
+     * Check connection
+     */
+    public function checkConnection()
+    {
+        return $this->executeQuery('WHM-PHP-API', null);
+    }
+
+    /**
      * Request parser
      */
     private function createQuery($host, $request, $parameters = [])
     {
-        $parlist = http_build_query($parameters);
+        if (isset($parameters)) {
+            $parlist = http_build_query($parameters);
+        } else {
+            $parlist = null;
+        }
         return $query = "https://{$host}/json-api/{$request}?api.version=1&{$parlist}";
     }
 
@@ -133,19 +143,21 @@ class cpanel
 
         $query = $this->createQuery($host, $request, $parameters);
 
+        // $password = json_encode(htmlspecialchars($password));
+        // $password = substr($password, 1, -1);
+        // echo "$password <br>";
+
         $curl = curl_init();                                    // Create Curl Object
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);          // Allow self-signed certs
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);          // Allow certs that do not match the hostname
-        curl_setopt($curl, CURLOPT_HEADER, 0);                  // Do not include header in output
+        //curl_setopt($curl, CURLOPT_HEADER, 0);                  // Do not include header in output
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);          // Return contents of transfer on curl_exec
-        $header[0] = "Authorization: Basic " . base64_encode($username . ":" . $password) . "\n\r";
+        //$header[0] = "Authorization: Basic " . base64_encode($username . ":" . $password) . "\n\r";
+        $header[0] = "Authorization: whm $username:$password";
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);        // set the username and password
         curl_setopt($curl, CURLOPT_URL, $query);                // execute the query
         $result = curl_exec($curl);
 
-        /**
-         * cURL error info
-         */
         if ($result == false) {
             echo "curl_exec threw error \"" . curl_error($curl) . "\"";    // error notification            
         }
@@ -155,21 +167,26 @@ class cpanel
         if (!curl_errno($curl)) {
             switch ($http_error = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
                 case 200:
-                    echo "Request succeded <br>";
+                    echo "HTTP status OK: Request succeded <br>";
                     break;
                 case 403:
-                    echo "Invalid credentials <br>";
+                    echo "HTTP error 403: Invalid credentials <br>";
                     break;
                 case 404:
-                    echo "Invalid IP adress <br>";
+                    echo "HTTP error 404: Invalid IP adress <br>";
                     break;
                 default:
-                    echo "Unexpected HTTP error: {$http_error} <br>";
+                    echo "HTTP error: Unexpected HTTP error: {$http_error} <br>";
             }
         }
         curl_close($curl);
-        echo "$result";
+
         $json = (json_decode($result, true));
-        echo "WHM API error: {$json['cpanelresult']['error']}";
+
+        if (isset($json['metadata']['reason'])) {
+            echo "Result: {$json['metadata']['reason']}";
+        } else {
+            echo "WHM API error: {$json['cpanelresult']['error']}";
+        }
     }
 }
