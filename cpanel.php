@@ -31,8 +31,10 @@ class cpanel
      */
     function __construct($username, $password, $host)
     {
+        $pass = json_encode(htmlspecialchars($password));
+        $pass = substr($password, 1, -1);
         $this->username = $username;
-        $this->password = $password;
+        $this->password = $pass;
         $this->host = $host;
     }
 
@@ -135,10 +137,6 @@ class cpanel
         $username = $this->getUsername();
         $password = $this->getPassword();
         $host = $this->getHost();
-
-        $password = json_encode(htmlspecialchars($password));
-        $password = substr($password, 1, -1);
-        echo "$password <br>";
 
         $query = $this->createQuery($host, $request, $parameters);
 
