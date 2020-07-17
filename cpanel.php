@@ -1,12 +1,22 @@
 <?php
 
 /**
+ * Użytkownik: root
+ * Hasło: BN+D<$*F2a'*`5\r
+ * 164.90.179.12
+ * https://161.35.219.197:2087/
+ */
+
+/**
  * \class cpanel
  * \brief This is class which allow to perform 
  * administrative tasks by WHM API 1
+ * functions pass user parameters to executeQuery function
+ * executeQuery parse html request and return server response
  */
 class cpanel
 {
+
     /**
      * class private variables
      * username & password for WHM panel
@@ -126,6 +136,10 @@ class cpanel
         $password = $this->getPassword();
         $host = $this->getHost();
 
+        $password = json_encode(htmlspecialchars($password));
+        $password = substr($password, 1, -1);
+        echo "$password <br>";
+
         $query = $this->createQuery($host, $request, $parameters);
 
         $curl = curl_init();                                    // Create Curl Object
@@ -137,31 +151,34 @@ class cpanel
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);        // set the username and password
         curl_setopt($curl, CURLOPT_URL, $query);                // execute the query
         $result = curl_exec($curl);
-        /*
+
+        /**
+         * cURL error info
+         */
         if ($result == false) {
-            error_log("curl_exec threw error \"" . curl_error($curl) . "\" for $query");    // log error if curl exec fails
-            echo "Invalid request";                             // error notification                    
+            echo "curl_exec threw error \"" . curl_error($curl) . "\"";    // error notification            
         }
-        */
         /**
          * Check HTTP connection status
          */
         if (!curl_errno($curl)) {
             switch ($http_error = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
                 case 200:
-                    echo "Request succeded";
+                    echo "Request succeded <br>";
                     break;
                 case 403:
-                    echo "Invalid credentials";
+                    echo "Invalid credentials <br>";
                     break;
                 case 404:
-                    echo "Invalid IP adress";
+                    echo "Invalid IP adress <br>";
                     break;
                 default:
-                    echo "Unexpected HTTP error";
+                    echo "Unexpected HTTP error: {$http_error} <br>";
             }
         }
         curl_close($curl);
-        print $result;
+        echo "$result";
+        $json = (json_decode($result,true));
+        echo "WHM API error: {$json['cpanelresult']['error']}";
     }
 }
