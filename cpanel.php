@@ -27,6 +27,7 @@ class cpanel
         $this->username = $username;
         $this->password = $password;
         $this->host = $host;
+        echo "New instance of class cpanel has been created<br>";
     }
 
     /**
@@ -68,7 +69,7 @@ class cpanel
      * Parse parameters as an associative array
      * Require username and domain
      */
-    public function createAccount($username, $domain, $contactemail='', $password='', $plan='')
+    public function createAccount($username, $domain, $contactemail = '', $password = '', $plan = '')
     {
         return $this->executeQuery('createacct', [
             'username' => $username,
@@ -103,7 +104,7 @@ class cpanel
     /**
      * Change account plan
      */
-    public function changePlan($username, $plan)
+    public function changePlan($username, $plan = '')
     {
         return $this->executeQuery('changepackage', [
             'user' => $username,
@@ -116,7 +117,7 @@ class cpanel
      */
     public function checkConnection()
     {
-        return $this->executeQuery('WHM-PHP-API', null);
+        return $this->executeQuery('WHM-PHP-API_by_MS', null);
     }
 
     /**
@@ -145,6 +146,9 @@ class cpanel
 
         $query = $this->createQuery($host, $request, $parameters);
 
+        /**
+         * I have problems with base64_encode function
+         */
         // $password = json_encode(htmlspecialchars($password));
         // $password = substr($password, 1, -1);
         // echo "$password <br>";
@@ -187,6 +191,7 @@ class cpanel
 
         if (isset($json['metadata']['reason'])) {
             echo "Result: {$json['metadata']['reason']}";
+            echo "Result: {$json['data']}<br>";
         } else {
             echo "WHM API error: {$json['cpanelresult']['error']}";
         }
