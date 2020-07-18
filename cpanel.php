@@ -117,7 +117,23 @@ class cpanel
      */
     public function checkConnection()
     {
-        return $this->executeQuery('WHM-PHP-API_by_MS', null);
+        try {
+            $this->executeQuery('WHM-PHP-API_by_MS', null);
+        } catch (Exception $e) {
+            switch ($e->getMessage()) {
+                case 200:
+                    echo "HTTP status OK: Request succeded <br>";
+                    break;
+                case 403:
+                    echo "HTTP error 403: Invalid credentials <br>";
+                    break;
+                case 404:
+                    echo "HTTP error 404: Invalid IP adress <br>";
+                    break;
+                default:
+                    echo "HTTP error: Unexpected HTTP error: {$e->getMessage()} <br>";
+            }
+        }
     }
 
     /**
@@ -168,22 +184,11 @@ class cpanel
             echo "curl_exec threw error \"" . curl_error($curl) . "\"";    // error notification            
         }
         /**
-         * Check HTTP connection status
+         * Check HTTP connection status by throwing exception
+         * for checkConnection function
          */
         if (!curl_errno($curl)) {
-            switch ($http_error = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                case 200:
-                    echo "HTTP status OK: Request succeded <br>";
-                    break;
-                case 403:
-                    echo "HTTP error 403: Invalid credentials <br>";
-                    break;
-                case 404:
-                    echo "HTTP error 404: Invalid IP adress <br>";
-                    break;
-                default:
-                    echo "HTTP error: Unexpected HTTP error: {$http_error} <br>";
-            }
+            throw new Exception($http_error = curl_getinfo($curl, CURLINFO_HTTP_CODE));
         }
         curl_close($curl);
 
@@ -191,7 +196,7 @@ class cpanel
 
         if (isset($json['metadata']['reason'])) {
             echo "Result: {$json['metadata']['reason']}<br>";
-            echo "Result: {$json['data']}<br>";
+            //echo "Result: {$json['data']}<br>";
         } else if (isset($json['cpanel']['error'])) {
             echo "WHM API error: {$json['cpanelresult']['error']}<br>";
         } else {
