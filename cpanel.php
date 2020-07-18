@@ -27,7 +27,7 @@ class cpanel
         $this->username = $username;
         $this->password = $password;
         $this->host = $host;
-        echo "New instance of class cpanel has been created<br>";
+        echo "New instance of class cpanel has been created. You can change credentials by calling setAuthorization function<br>";
     }
 
     /**
@@ -121,9 +121,6 @@ class cpanel
             $this->executeQuery('WHM-PHP-API_by_MS', null);
         } catch (Exception $e) {
             switch ($e->getMessage()) {
-                case 200:
-                    echo "HTTP status OK: Request succeded <br>";
-                    break;
                 case 403:
                     echo "HTTP error 403: Invalid credentials <br>";
                     break;
@@ -147,6 +144,23 @@ class cpanel
             $parlist = null;
         }
         return $query = "https://{$host}/json-api/{$request}?api.version=1&{$parlist}";
+    }
+
+    /**
+     * Print results
+     */
+    private function printResults($data)
+    {
+        $json = (json_decode($data, true));
+
+        if (isset($json['metadata']['reason'])) {
+            echo "Result: {$json['metadata']['reason']}<br>";
+            //echo "Result: {$json['data']}<br>";
+        } else if (isset($json['cpanel']['error'])) {
+            echo "WHM API error: {$json['cpanelresult']['error']}<br>";
+        } else {
+            echo "Fatal error<br>";
+        }
     }
 
     /*
@@ -187,20 +201,12 @@ class cpanel
          * Check HTTP connection status by throwing exception
          * for checkConnection function
          */
-        if (!curl_errno($curl)) {
+        if ((!curl_errno($curl)) != 200) {
             throw new Exception($http_error = curl_getinfo($curl, CURLINFO_HTTP_CODE));
+        } else {
+            echo "HTTP status OK: Request succeded <br>";
         }
         curl_close($curl);
-
-        $json = (json_decode($result, true));
-
-        if (isset($json['metadata']['reason'])) {
-            echo "Result: {$json['metadata']['reason']}<br>";
-            //echo "Result: {$json['data']}<br>";
-        } else if (isset($json['cpanel']['error'])) {
-            echo "WHM API error: {$json['cpanelresult']['error']}<br>";
-        } else {
-            echo "Fatal error<br>";
-        }
+        $this->printResults($result);
     }
 }
