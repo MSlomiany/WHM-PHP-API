@@ -190,10 +190,12 @@ class cpanel
         $json = (json_decode($result, true));
 
         if (isset($json['metadata']['reason'])) {
-            echo "Result: {$json['metadata']['reason']}";
+            echo "Result: {$json['metadata']['reason']}<br>";
             echo "Result: {$json['data']}<br>";
+        } else if (isset($json['cpanel']['error'])) {
+            echo "WHM API error: {$json['cpanelresult']['error']}<br>";
         } else {
-            echo "WHM API error: {$json['cpanelresult']['error']}";
+            echo "Fatal error<br>";
         }
     }
 }
