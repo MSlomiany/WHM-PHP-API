@@ -218,6 +218,9 @@ class cpanel
 <body>
     <?php
     $cpanel = new cpanel($_POST['login1'], $_POST['token1'], $_POST['server1']);
+    /* if (isset($_POST['login1']) && isset($_POST['token1']) && isset($_POST['server1'])) {
+        $cpanel = new cpanel($_POST['login1'], $_POST['token1'], $_POST['server1']);
+    } */
     if (isset($_POST['name1']) && isset($_POST['domain1'])) {
         $cpanel->createAccount($_POST['name1'], $_POST['domain1']);
     }
@@ -225,6 +228,12 @@ class cpanel
         $cpanel->removeAccount($_POST['name2']);
     }
     ?>
+    <!-- <form action="" method="POST">
+        <p>login: <input type="input" name="login1"></p>
+        <p>token: <input type="input" name="token1"></p>
+        <p>host: <input type="input" name="server1"></p>
+        <p><button type="submit">Zaloguj</button>
+    </form> -->
     <form action="" method="POST">
         <p>name: <input type="input" name="name1"></p>
         <p>domain: <input type="input" name="domain1"></p>
