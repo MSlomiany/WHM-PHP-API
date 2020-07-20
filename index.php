@@ -222,9 +222,11 @@ class cpanel
     if (isset($_POST['login1']) && isset($_POST['token1']) && isset($_POST['server1'])) {
         $cpanel = new cpanel($_POST['login1'], $_POST['token1'], $_POST['server1']);
         $_SESSION['cpanel'] = $cpanel;
+        /*
         $_SESSION['login'] = $_POST['login1'];
         $_SESSION['token'] = $_POST['token1'];
         $_SESSION['server'] = $_POST['server1'];
+        */
     } else if (isset($_SESSION['cpanel'])) {
         $cpanel = $_SESSION['cpanel'];
     }
@@ -233,6 +235,9 @@ class cpanel
     }
     if (isset($_POST['name2'])) {
         $cpanel->removeAccount($_POST['name2']);
+    }
+    if (isset($_SESSION['cpanel'])) {
+        $_SESSION['cpanel'] = $cpanel;
     }
     ?>
     <form action="" method="POST">
