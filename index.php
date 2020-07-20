@@ -155,7 +155,9 @@ class cpanel
 
         if (isset($json['metadata']['reason'])) {
             echo "Result: {$json['metadata']['reason']}<br>";
-            //echo "Result: {$json['data']}<br>";
+            if (is_array($json['data']) && isset($json['data'])) {
+                print_r(array_values($json['data']));
+            }
         } else if (isset($json['cpanel']['error'])) {
             echo "WHM API error: {$json['cpanelresult']['error']}<br>";
         } else {
@@ -222,9 +224,9 @@ class cpanel
     if (isset($_POST['login1']) && isset($_POST['token1']) && isset($_POST['server1'])) {
         $cpanel = new cpanel($_POST['login1'], $_POST['token1'], $_POST['server1']);
         $_SESSION['cpanel'] = $cpanel;
-        $_SESSION['login'] = $_POST['login1'];
+        /* $_SESSION['login'] = $_POST['login1'];
         $_SESSION['token'] = $_POST['token1'];
-        $_SESSION['server'] = $_POST['server1'];
+        $_SESSION['server'] = $_POST['server1']; */
     } else if (isset($_SESSION['cpanel'])) {
         $cpanel = $_SESSION['cpanel'];
     }
@@ -234,25 +236,50 @@ class cpanel
     if (isset($_POST['name2']) && isset($_SESSION['cpanel'])) {
         $cpanel->removeAccount($_POST['name2']);
     }
+    if (isset($_POST['name4']) && isset($_SESSION['cpanel'])) {
+        $cpanel->listAccount($_POST['name4']);
+    }
+    if (isset($_POST['name3']) && isset($_POST['plan3']) && isset($_SESSION['cpanel'])) {
+        $cpanel->changePlan($_POST['name3'], $_POST['plan3']);
+    }
     if (isset($_POST['logout'])) {
         session_unset();
         echo "Wylogowano pomyślnie. Użyj ponownie funkcji logowania. <br>";
     }
     ?>
     <form action="" method="POST">
-        <p>login: <input type="input" name="login1"></p>
-        <p>token: <input type="input" name="token1"></p>
-        <p>host: <input type="input" name="server1"></p>
+        <p>login: <input type="input" name="login1" placeholder="username"></p>
+        <p>token: <input type="password" name="token1" placeholder="token"></p>
+        <p>host: <input type="input" name="server1" placeholder="host"></p>
         <p><button type="submit">Zaloguj</button>
     </form>
     <form action="" method="POST">
-        <p>name: <input type="input" name="name1"></p>
-        <p>domain: <input type="input" name="domain1"></p>
+        <p>name: <input type="input" name="name1" placeholder="nazwa konta"></p>
+        <p>domain: <input type="input" name="domain1" placeholder="domena"></p>
         <p><button type="submit">Utwórz konto</button>
     </form>
     <form action="" method="POST">
-        <p>name: <input type="input" name="name2"></p>
+        <p>name: <input type="input" name="name2" placeholder="nazwa konta"></p>
         <p><button type="submit">Usuń konto</button>
+    </form>
+    <form action="" method="POST">
+        <p>name: <input type="input" name="name4" placeholder="nazwa konta"></p>
+        <p><button type="submit">Listuj konto</button>
+    </form>
+    <form action="" method="POST">
+        <p>name: <input type="input" name="name3"></p>
+        <label>
+            Wybierz plan:
+            <select name="plan3">
+                <!--pusta opcja na początku-->
+                <option></option>
+                <option value="default">Domyślny</option>
+                <option value="Pro">Pro</option>
+                <option value="Tiny">Tiny</option>
+            </select>
+        </label>
+        <br>
+        <p><button>Zmień plan</button></p>
     </form>
     <form action="" method="POST">
         <p><input type="submit" value="Wyloguj" name="logout">
