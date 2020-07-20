@@ -155,7 +155,7 @@ class cpanel
 
         if (isset($json['metadata']['reason'])) {
             echo "Result: {$json['metadata']['reason']}<br>";
-            if (is_array($json['data']) && isset($json['data'])) {
+            if (isset($json['data'])) {
                 print_r(array_values($json['data']));
             }
         } else if (isset($json['cpanel']['error'])) {
