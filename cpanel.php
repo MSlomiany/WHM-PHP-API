@@ -16,8 +16,8 @@ class cpanel
      * server IP
      */
     private $username;  //login
-    private $password;  //hasło     
-    private $host;      //serwer
+    private $password;  //password/TOKEN 
+    private $host;      //server
 
     /**
      * class cpanel constructor
@@ -66,8 +66,8 @@ class cpanel
 
     /**
      * Create new account
-     * Parse parameters as an associative array
-     * Require username and domain
+     * Pass parameters as an associative array
+     * Require username and domain, other parameters are optional
      */
     public function createAccount($username, $domain, $contactemail = '', $password = '', $plan = '')
     {
@@ -186,7 +186,7 @@ class cpanel
         $curl = curl_init();                                    // Create Curl Object
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);          // Allow self-signed certs
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);          // Allow certs that do not match the hostname
-        //curl_setopt($curl, CURLOPT_HEADER, 0);                  // Do not include header in output
+        //curl_setopt($curl, CURLOPT_HEADER, 0);                // Do not include header in output
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);          // Return contents of transfer on curl_exec
         //$header[0] = "Authorization: Basic " . base64_encode($username . ":" . $password) . "\n\r";
         $header[0] = "Authorization: whm $username:$password";
