@@ -65,6 +65,54 @@ class cpanel
     }
 
     /**
+     * Create new account
+     * Parse parameters as an associative array
+     * Require username and domain
+     */
+    public function createAccount($username, $domain, $contactemail = '', $password = '', $plan = '')
+    {
+        return $this->executeQuery('createacct', [
+            'username' => $username,
+            'domain' => $domain,
+            'contactemail' => $contactemail,
+            'password' => $password,
+            'plan' => $plan
+        ]);
+    }
+
+    /**
+     * Remove existing account
+     */
+    public function removeAccount($username)
+    {
+        return $this->executeQuery('removeacct', [
+            'username' => $username
+        ]);
+    }
+
+    /**
+     * List account
+     */
+    public function listAccount($username)
+    {
+        return $this->executeQuery('listaccts', [
+            'search' => $username,
+            'searchtype' => 'user'
+        ]);
+    }
+
+    /**
+     * Change account plan
+     */
+    public function changePlan($username, $plan)
+    {
+        return $this->executeQuery('changepackage', [
+            'user' => $username,
+            'pkg' => $plan
+        ]);
+    }
+
+    /**
      * Check connection
      */
     public function checkConnection()
