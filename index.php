@@ -222,22 +222,21 @@ class cpanel
     if (isset($_POST['login1']) && isset($_POST['token1']) && isset($_POST['server1'])) {
         $cpanel = new cpanel($_POST['login1'], $_POST['token1'], $_POST['server1']);
         $_SESSION['cpanel'] = $cpanel;
-        /*
         $_SESSION['login'] = $_POST['login1'];
         $_SESSION['token'] = $_POST['token1'];
         $_SESSION['server'] = $_POST['server1'];
-        */
     } else if (isset($_SESSION['cpanel'])) {
         $cpanel = $_SESSION['cpanel'];
     }
-    if (isset($_POST['name1']) && isset($_POST['domain1'])) {
+    if (isset($_POST['name1']) && isset($_POST['domain1']) && isset($_SESSION['cpanel'])) {
         $cpanel->createAccount($_POST['name1'], $_POST['domain1']);
     }
-    if (isset($_POST['name2'])) {
+    if (isset($_POST['name2']) && isset($_SESSION['cpanel'])) {
         $cpanel->removeAccount($_POST['name2']);
     }
-    if (isset($_SESSION['cpanel'])) {
-        $_SESSION['cpanel'] = $cpanel;
+    if (isset($_POST['logout'])) {
+        session_unset();
+        echo "Wylogowano pomyślnie. Użyj ponownie funkcji logowania. <br>";
     }
     ?>
     <form action="" method="POST">
@@ -254,6 +253,9 @@ class cpanel
     <form action="" method="POST">
         <p>name: <input type="input" name="name2"></p>
         <p><button type="submit">Usuń konto</button>
+    </form>
+    <form action="" method="POST">
+        <p><input type="submit" value="Wyloguj" name="logout">
     </form>
 </body>
 
