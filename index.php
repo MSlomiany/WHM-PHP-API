@@ -217,7 +217,7 @@ class cpanel
 
 <body>
     <?php
-    $cpanel = new cpanel('root', 'D94X7LNHO24Q5F4A50PMBY9ZBVR6FUYU', '164.90.179.12:2087');
+    $cpanel = new cpanel($_POST['login1'], $_POST['token1'], $_POST['server1']);
     if (isset($_POST['name1']) && isset($_POST['domain1'])) {
         $cpanel->createAccount($_POST['name1'], $_POST['domain1']);
     }
