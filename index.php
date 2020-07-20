@@ -221,11 +221,12 @@ class cpanel
     /* $cpanel = new cpanel($_POST['login1'], $_POST['token1'], $_POST['server1']); */
     if (isset($_POST['login1']) && isset($_POST['token1']) && isset($_POST['server1'])) {
         $cpanel = new cpanel($_POST['login1'], $_POST['token1'], $_POST['server1']);
+        $_SESSION['cpanel'] = $cpanel;
         $_SESSION['login'] = $_POST['login1'];
         $_SESSION['token'] = $_POST['token1'];
         $_SESSION['server'] = $_POST['server1'];
-    } else if (isset($_SESSION['login']) && isset($_SESSION['token']) && isset($_SESSION['server'])) {
-        $cpanel = new cpanel($_SESSION['login'], $_SESSION['token'], $_SESSION['server']);
+    } else if (isset($_SESSION['cpanel'])) {
+        $cpanel = $_SESSION['cpanel'];
     }
     if (isset($_POST['name1']) && isset($_POST['domain1'])) {
         $cpanel->createAccount($_POST['name1'], $_POST['domain1']);
